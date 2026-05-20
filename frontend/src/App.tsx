@@ -9,16 +9,16 @@ import type { Category, FeedItem } from './types'
 
 const SLOT_ORDER: Category[] = ['security', 'ai', 'dev', 'tech', 'cloud', 'world']
 
-const STORIES_PER_SLOT = 5
+const STORIES_PER_SLOT = 7
 const STORY_DURATION_MS = 15_000
 
 const SLOT_REPEATS: Record<Category, number> = {
-  security: 3,
+  security: 2,
   ai:       1,
-  dev:      3,
-  tech:     3,
-  cloud:    3,
-  world:    3,
+  dev:      2,
+  tech:     2,
+  cloud:    2,
+  world:    2,
 }
 
 const SLOT_DURATIONS = SLOT_ORDER.map(cat => STORY_DURATION_MS * STORIES_PER_SLOT * SLOT_REPEATS[cat])

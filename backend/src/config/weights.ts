@@ -18,5 +18,5 @@ export const SLOT_ORDER: Category[] = [
   'world',
 ]
 
-export const STORIES_PER_SLOT = 5
+export const STORIES_PER_SLOT = 7
 export const STORY_DURATION_MS = 15_000
