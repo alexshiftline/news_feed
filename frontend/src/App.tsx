@@ -17,7 +17,7 @@ const SLOT_REPEATS: Record<Category, number> = {
   ai:       1,
   dev:      2,
   tech:     2,
-  cloud:    2,
+  cloud:    1,
   world:    2,
 }
 
@@ -111,7 +111,9 @@ export default function App() {
   const categoryItems = getItemsForCategory(items, currentCategory)
   const effectiveStory = categoryItems.length > 0 ? storyIndex % categoryItems.length : 0
   const mainItem = categoryItems[effectiveStory] ?? null
-  const queueItems = categoryItems.slice(effectiveStory + 1, effectiveStory + 1 + 4)
+  const queueItems = categoryItems.length > 0
+    ? Array.from({ length: 4 }, (_, i) => categoryItems[(effectiveStory + 1 + i) % categoryItems.length])
+    : []
   const tickerItems = items.slice(0, 40)
 
   const categoryAccent = `var(--color-${currentCategory})`
