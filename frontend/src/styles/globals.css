@@ -88,6 +88,10 @@ body {
   white-space: nowrap;
   will-change: transform;
   animation: ticker-scroll linear infinite;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: subpixel-antialiased;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 /* ── Progress bar ── */

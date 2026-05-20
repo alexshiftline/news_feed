@@ -42,7 +42,7 @@ export default function MainPanel({ item, category }: Props) {
   return (
     <div style={{
       position: 'relative',
-      padding: '32px 40px',
+      padding: 'clamp(14px, 3vh, 32px) clamp(16px, 3vw, 40px)',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
@@ -136,7 +136,7 @@ export default function MainPanel({ item, category }: Props) {
           {/* Right column: QR code */}
           {item.link && (
             <div style={{ flexShrink: 0 }}>
-              <QrCode url={item.link} size={175} />
+              <QrCode url={item.link} size={Math.min(175, Math.floor(window.innerHeight * 0.22))} />
             </div>
           )}
         </article>

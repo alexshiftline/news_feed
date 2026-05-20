@@ -42,7 +42,7 @@ export default function MiniQueue({ items }: Props) {
           key={item.guid}
           style={{
             flex: 1,
-            padding: '10px 14px',
+            padding: 'clamp(6px, 1.2vh, 10px) clamp(8px, 1.2vw, 14px)',
             borderLeft: idx === 0 ? `3px solid var(--color-${item.category})` : undefined,
             borderRight: `1px solid var(--border)`,
             ...(idx > 0 ? { borderLeft: `3px solid var(--color-${item.category})` } : {}),
@@ -56,7 +56,7 @@ export default function MiniQueue({ items }: Props) {
           onClick={() => item.link && window.open(item.link, '_blank', 'noopener')}
         >
           <div style={{
-            fontSize: '14px',
+            fontSize: 'clamp(11px, 1.5vh, 14px)',
             fontWeight: 600,
             color: 'var(--text-primary)',
             overflow: 'hidden',

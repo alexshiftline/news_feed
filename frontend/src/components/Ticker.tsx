@@ -1,25 +1,31 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FeedItem } from '../types'
 
 interface Props {
   items: FeedItem[]
 }
 
-const TICKER_SPEED = 60 // px per second
+const TICKER_SPEED = 90 // px per second
 
 export default function Ticker({ items }: Props) {
   const trackRef = useRef<HTMLDivElement>(null)
-  const [duration, setDuration] = useState(60)
-  const [tickerKey, setTickerKey] = useState(0)
-
-  useLayoutEffect(() => {
-    if (!trackRef.current) return
-    const halfWidth = trackRef.current.scrollWidth / 2
-    if (halfWidth > 0) setDuration(halfWidth / TICKER_SPEED)
-  }, [items])
+  const [duration, setDuration] = useState(120)
+  // Only set once — never reset so the animation never restarts mid-scroll
+  const initialised = useRef(false)
 
   useEffect(() => {
-    setTickerKey(k => k + 1)
+    if (initialised.current) return
+    if (!trackRef.current || items.length === 0) return
+    // Wait one frame for layout to settle
+    const raf = requestAnimationFrame(() => {
+      if (!trackRef.current) return
+      const halfWidth = trackRef.current.scrollWidth / 2
+      if (halfWidth > 0) {
+        setDuration(halfWidth / TICKER_SPEED)
+        initialised.current = true
+      }
+    })
+    return () => cancelAnimationFrame(raf)
   }, [items])
 
   if (items.length === 0) {
@@ -33,7 +39,7 @@ export default function Ticker({ items }: Props) {
         overflow: 'hidden',
       }}>
         <span style={{ color: 'var(--text-dim)', fontSize: '13px', fontFamily: 'var(--font-mono)' }}>
-          ▶ Loading headlines…
+          Loading headlines…
         </span>
       </div>
     )
@@ -54,7 +60,6 @@ export default function Ticker({ items }: Props) {
       overflow: 'hidden',
       display: 'flex',
       alignItems: 'center',
-      gap: '0',
     }}>
       {/* LIVE pill */}
       <div style={{
@@ -88,7 +93,6 @@ export default function Ticker({ items }: Props) {
 
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
         <div
-          key={tickerKey}
           ref={trackRef}
           className="ticker-track"
           style={{ animationDuration: `${duration}s` }}
@@ -105,7 +109,7 @@ export default function Ticker({ items }: Props) {
                 ◆
               </span>
               <span style={{
-                fontSize: '14px',
+                fontSize: '13px',
                 color: 'var(--text-secondary)',
                 paddingRight: '48px',
               }}>

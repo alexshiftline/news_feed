@@ -5,7 +5,6 @@ import MainPanel from './components/MainPanel'
 import MiniQueue from './components/MiniQueue'
 import Ticker from './components/Ticker'
 import WeatherPanel from './components/WeatherPanel'
-import DuckPet from './components/DuckPet'
 import type { Category, FeedItem } from './types'
 
 const SLOT_ORDER: Category[] = ['security', 'ai', 'dev', 'tech', 'cloud', 'world']
@@ -19,7 +18,7 @@ const SLOT_REPEATS: Record<Category, number> = {
   dev:      3,
   tech:     3,
   cloud:    3,
-  world:    2,
+  world:    3,
 }
 
 const SLOT_DURATIONS = SLOT_ORDER.map(cat => STORY_DURATION_MS * STORIES_PER_SLOT * SLOT_REPEATS[cat])
@@ -122,7 +121,7 @@ export default function App() {
       display: 'grid',
       height: '100vh',
       width: '100vw',
-      gridTemplateRows: '52px 1fr 96px 48px',
+      gridTemplateRows: 'clamp(36px, 5.5vh, 52px) 1fr clamp(60px, 14vh, 96px) clamp(32px, 5vh, 48px)',
       overflow: 'hidden',
       background: 'var(--bg)',
     }}>
@@ -132,7 +131,7 @@ export default function App() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 32px',
+        padding: '0 clamp(12px, 2.5vw, 32px)',
         background: 'var(--surface)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -182,7 +181,7 @@ export default function App() {
       {/* Main content */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 320px',
+        gridTemplateColumns: '1fr clamp(200px, 22vw, 320px)',
         minHeight: 0,
         overflow: 'hidden',
       }}>
@@ -202,7 +201,7 @@ export default function App() {
       <Ticker items={tickerItems} />
 
       {/* Duck pet — walks on top of the ticker */}
-      <DuckPet />
+      {/* <DuckPet /> */}
     </div>
   )
 }

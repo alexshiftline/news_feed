@@ -19,42 +19,56 @@ import r4c4 from '../sprites/duck_r4_c4.png'
 import r4c5 from '../sprites/duck_r4_c5.png'
 import r4c6 from '../sprites/duck_r4_c6.png'
 
-const ANIMS = {
-  idle:     { frames: [r1c1, r1c2],                          fps: 2,  speed: 0  },
-  walkSlow: { frames: [r2c1, r2c2, r2c3, r2c4, r2c5, r2c6], fps: 8,  speed: 40 },
-  bounce:   { frames: [r3c1, r3c2, r3c3, r3c4],              fps: 6,  speed: 0  },
-  walkFast: { frames: [r4c1, r4c2, r4c3, r4c4, r4c5, r4c6], fps: 12, speed: 80 },
-} as const
-
-type AnimName = keyof typeof ANIMS
-
-const BEHAVIOURS: [AnimName, number][] = [
-  ['idle',     3000],
-  ['walkSlow', 4000],
-  ['idle',     2000],
-  ['bounce',   2500],
-  ['walkFast', 5000],
-  ['idle',     2000],
-  ['walkSlow', 6000],
-  ['bounce',   1500],
-  ['walkFast', 4000],
-  ['idle',     3500],
+// All frames as a flat indexed array so we can set by index rather than object ref
+const ALL_FRAMES = [
+  // idle: 0,1
+  r1c1, r1c2,
+  // walkSlow: 2..7
+  r2c1, r2c2, r2c3, r2c4, r2c5, r2c6,
+  // bounce: 8..11
+  r3c1, r3c2, r3c3, r3c4,
+  // walkFast: 12..17
+  r4c1, r4c2, r4c3, r4c4, r4c5, r4c6,
 ]
 
-const SCALE = 3
-const DUCK_W = 25 * SCALE
+interface Anim { start: number; len: number; fps: number; speed: number }
+const ANIMS: Record<string, Anim> = {
+  idle:     { start: 0,  len: 2, fps: 2,  speed: 0  },
+  walkSlow: { start: 2,  len: 6, fps: 8,  speed: 40 },
+  bounce:   { start: 8,  len: 4, fps: 6,  speed: 0  },
+  walkFast: { start: 12, len: 6, fps: 12, speed: 80 },
+}
+
+const BEHAVIOURS: [string, number][] = [
+  ['idle',     3000],
+  ['walkSlow', 5000],
+  ['idle',     2000],
+  ['bounce',   2500],
+  ['walkFast', 6000],
+  ['idle',     2500],
+  ['walkSlow', 7000],
+  ['bounce',   2000],
+  ['walkFast', 5000],
+]
+
+// Original sprites ~22×27px. SCALE=1 keeps native size, quarter of SCALE=3 original.
+const SCALE = 1
+const DUCK_W = 25 * SCALE  // px
 
 export default function DuckPet() {
-  // Everything in refs so the single master tick never has stale closures
-  const animRef   = useRef<AnimName>('idle')
-  const frameRef  = useRef(0)
-  const xRef      = useRef(120)
-  const dirRef    = useRef(1)
-  const flipRef   = useRef(false)
-  const widthRef  = useRef(window.innerWidth)
+  const imgRef = useRef<HTMLImageElement>(null)
 
-  // Only rendered state — drives the actual DOM update
-  const [src,  setSrc]  = useState(ANIMS.idle.frames[0])
+  // All mutable state in refs — no React state for animation hot path
+  const animNameRef   = useRef('idle')
+  const frameRef      = useRef(0)
+  const frameTickRef  = useRef(0) // counts ticks per frame
+  const xRef          = useRef(120)
+  const dirRef        = useRef(1)
+  const widthRef      = useRef(window.innerWidth)
+  const behavIdxRef   = useRef(0)
+  const behavTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Only x and flip need React state for DOM positioning
   const [x,    setX]    = useState(120)
   const [flip, setFlip] = useState(false)
 
@@ -64,55 +78,62 @@ export default function DuckPet() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // Behaviour sequencer — plain setTimeout chain, no async/await
   useEffect(() => {
-    // Behaviour sequencer
-    let cancelled = false
-    let idx = 0
-    ;(async () => {
-      while (!cancelled) {
-        const [name, ms] = BEHAVIOURS[idx % BEHAVIOURS.length]
-        idx++
-        animRef.current = name
-        frameRef.current = 0
-        await new Promise<void>(res => setTimeout(res, ms))
-      }
-    })()
-    return () => { cancelled = true }
+    function next() {
+      const [name, ms] = BEHAVIOURS[behavIdxRef.current % BEHAVIOURS.length]
+      behavIdxRef.current++
+      animNameRef.current = name
+      frameRef.current = 0
+      frameTickRef.current = 0
+      behavTimerRef.current = setTimeout(next, ms)
+    }
+    next()
+    return () => { if (behavTimerRef.current) clearTimeout(behavTimerRef.current) }
   }, [])
 
+  // Master tick — drives frame + position, writes directly to DOM via ref
   useEffect(() => {
-    // Single master tick: advances frame + position
-    const TICK = 80 // ms — ~12.5 ticks/s, enough for 12fps max
+    const TICK_MS = 80
 
     const id = setInterval(() => {
-      const anim = ANIMS[animRef.current]
+      const anim = ANIMS[animNameRef.current]
 
-      // Advance frame
-      frameRef.current = (frameRef.current + 1) % anim.frames.length
-      setSrc(anim.frames[frameRef.current])
+      // Advance frame based on fps vs tick rate
+      const ticksPerFrame = Math.max(1, Math.round((1000 / anim.fps) / TICK_MS))
+      frameTickRef.current++
+      if (frameTickRef.current >= ticksPerFrame) {
+        frameTickRef.current = 0
+        frameRef.current = (frameRef.current + 1) % anim.len
+        // Write src directly to DOM — no React re-render
+        if (imgRef.current) {
+          imgRef.current.src = ALL_FRAMES[anim.start + frameRef.current]
+        }
+      }
 
-      // Move position
+      // Move
       if (anim.speed > 0) {
-        const dx = (anim.speed * TICK) / 1000
+        const dx = (anim.speed * TICK_MS) / 1000
         const maxX = widthRef.current - DUCK_W - 4
         let newX = xRef.current + dirRef.current * dx
 
         if (newX <= 0) {
           newX = 0
           dirRef.current = 1
-          flipRef.current = false
+          imgRef.current && (imgRef.current.style.transform = 'scaleX(1)')
           setFlip(false)
         } else if (newX >= maxX) {
           newX = maxX
           dirRef.current = -1
-          flipRef.current = true
+          imgRef.current && (imgRef.current.style.transform = 'scaleX(-1)')
           setFlip(true)
         }
 
         xRef.current = newX
+        if (imgRef.current) imgRef.current.style.left = `${newX}px`
         setX(newX)
       }
-    }, TICK)
+    }, TICK_MS)
 
     return () => clearInterval(id)
   }, [])
@@ -127,7 +148,8 @@ export default function DuckPet() {
       zIndex: 50,
     }}>
       <img
-        src={src}
+        ref={imgRef}
+        src={ALL_FRAMES[0]}
         alt=""
         style={{
           position: 'absolute',

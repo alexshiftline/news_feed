@@ -67,16 +67,16 @@ export const FEEDS: FeedConfig[] = [
   { name: 'Exploit-DB',            url: 'https://www.exploit-db.com/rss.xml',                                        category: 'security', pollInterval: 10 },
 
   // ── CLOUD ───────────────────────────────────────────────────────────────
-  { name: 'AWS News',              url: 'https://aws.amazon.com/blogs/aws/feed/',                                     category: 'cloud',    pollInterval: 20 },
-  { name: 'Azure Blog',            url: 'https://azure.microsoft.com/en-us/blog/feed/',                              category: 'cloud',    pollInterval: 20 },
-  { name: 'Kubernetes Blog',       url: 'https://kubernetes.io/feed.xml',                                            category: 'cloud',    pollInterval: 20 },
-  { name: 'Docker Blog',           url: 'https://www.docker.com/blog/feed/',                                         category: 'cloud',    pollInterval: 20 },
-  { name: 'HashiCorp Blog',        url: 'https://www.hashicorp.com/blog/feed.xml',                                   category: 'cloud',    pollInterval: 20 },
+  { name: 'AWS News',              url: 'https://aws.amazon.com/blogs/aws/feed/',                                     category: 'cloud',    pollInterval: 5 },
+  { name: 'Azure Blog',            url: 'https://azure.microsoft.com/en-us/blog/feed/',                              category: 'cloud',    pollInterval: 5 },
+  { name: 'Kubernetes Blog',       url: 'https://kubernetes.io/feed.xml',                                            category: 'cloud',    pollInterval: 5 },
+  { name: 'Docker Blog',           url: 'https://www.docker.com/blog/feed/',                                         category: 'cloud',    pollInterval: 5 },
+  { name: 'HashiCorp Blog',        url: 'https://www.hashicorp.com/blog/feed.xml',                                   category: 'cloud',    pollInterval: 5 },
 
   // ── WORLD ───────────────────────────────────────────────────────────────
-  { name: 'Sky News – Home',       url: 'https://feeds.skynews.com/feeds/rss/home.xml',       category: 'world', pollInterval: 20 },
-  { name: 'Sky News – World',      url: 'https://feeds.skynews.com/feeds/rss/world.xml',      category: 'world', pollInterval: 20 },
-  { name: 'Sky News – Business',   url: 'https://feeds.skynews.com/feeds/rss/business.xml',  category: 'world', pollInterval: 20 },
-  { name: 'Sky News – Technology', url: 'https://feeds.skynews.com/feeds/rss/technology.xml', category: 'world', pollInterval: 20 },
-  { name: 'Sky News – US',         url: 'https://feeds.skynews.com/feeds/rss/us.xml',         category: 'world', pollInterval: 20 },
+  { name: 'Sky News – Home',       url: 'https://feeds.skynews.com/feeds/rss/home.xml',       category: 'world', pollInterval: 5 },
+  { name: 'Sky News – World',      url: 'https://feeds.skynews.com/feeds/rss/world.xml',      category: 'world', pollInterval: 5 },
+  { name: 'Sky News – Business',   url: 'https://feeds.skynews.com/feeds/rss/business.xml',  category: 'world', pollInterval: 5 },
+  { name: 'Sky News – Technology', url: 'https://feeds.skynews.com/feeds/rss/technology.xml', category: 'world', pollInterval: 5 },
+  { name: 'Sky News – US',         url: 'https://feeds.skynews.com/feeds/rss/us.xml',         category: 'world', pollInterval: 5 },
 ]

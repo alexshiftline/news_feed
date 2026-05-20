@@ -18,15 +18,16 @@ export default function WeatherPanel({ weather, slotOrder, currentSlotIndex, cat
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
+      minHeight: 0,
     }}>
       {/* Weather section */}
-      <div style={{ padding: '20px 20px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={{ padding: 'clamp(10px, 2vh, 20px) clamp(10px, 1.5vw, 20px)', display: 'flex', flexDirection: 'column', gap: 'clamp(6px, 1vh, 12px)', flexShrink: 0 }}>
         <header style={{
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
           color: 'var(--color-weather)',
-          fontSize: '11px',
+          fontSize: 'clamp(9px, 1vh, 11px)',
           fontWeight: 700,
           letterSpacing: '0.08em',
           fontFamily: 'var(--font-mono)',
@@ -36,14 +37,14 @@ export default function WeatherPanel({ weather, slotOrder, currentSlotIndex, cat
         </header>
 
         {!current ? (
-          <div style={{ color: 'var(--text-dim)', fontSize: '13px', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
             Loading weather…
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
               <span style={{
-                fontSize: '44px',
+                fontSize: 'clamp(24px, 5vh, 44px)',
                 fontFamily: 'var(--font-mono)',
                 fontWeight: 700,
                 lineHeight: 1,
@@ -51,31 +52,31 @@ export default function WeatherPanel({ weather, slotOrder, currentSlotIndex, cat
               }}>
                 {current.tempC}°
               </span>
-              <span style={{ fontSize: '22px' }}>{current.icon}</span>
+              <span style={{ fontSize: 'clamp(14px, 2.5vh, 22px)' }}>{current.icon}</span>
             </div>
 
-            <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+            <div style={{ fontSize: 'clamp(11px, 1.4vh, 13px)', color: 'var(--text-secondary)' }}>
               {current.description}
             </div>
 
-            <div style={{ fontSize: '12px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: 'clamp(10px, 1.2vh, 12px)', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
               Feels {current.feelsLikeC}° · {current.windKph} km/h {current.windDir}
             </div>
 
             <div style={{ height: '1px', background: 'var(--border)' }} />
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(4px, 0.8vh, 8px)' }}>
               {forecast.map(day => (
                 <div key={day.date} style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}>
-                  <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', width: '32px' }}>
+                  <span style={{ fontSize: 'clamp(9px, 1.1vh, 11px)', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', width: '32px' }}>
                     {day.date.toUpperCase()}
                   </span>
-                  <span style={{ fontSize: '15px' }}>{day.icon}</span>
-                  <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>
+                  <span style={{ fontSize: 'clamp(12px, 1.8vh, 15px)' }}>{day.icon}</span>
+                  <span style={{ fontSize: 'clamp(9px, 1.1vh, 11px)', fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>
                     {day.maxC}° <span style={{ color: 'var(--text-dim)' }}>/ {day.minC}°</span>
                   </span>
                 </div>
@@ -83,7 +84,7 @@ export default function WeatherPanel({ weather, slotOrder, currentSlotIndex, cat
             </div>
 
             {weather && (
-              <div style={{ fontSize: '10px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: 'clamp(8px, 1vh, 10px)', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
                 Updated {new Date(weather.fetchedAt).toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}
               </div>
             )}
@@ -92,17 +93,18 @@ export default function WeatherPanel({ weather, slotOrder, currentSlotIndex, cat
       </div>
 
       {/* Divider */}
-      <div style={{ height: '1px', background: 'var(--border)', margin: '0 20px' }} />
+      <div style={{ height: '1px', background: 'var(--border)', margin: '0 clamp(8px, 1.2vw, 20px)', flexShrink: 0 }} />
 
-      {/* Topic cycle indicator */}
-      <div style={{ padding: '14px 20px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      {/* Topic cycle indicator — scrollable so it never clips */}
+      <div style={{ padding: 'clamp(8px, 1.5vh, 14px) clamp(10px, 1.5vw, 20px)', display: 'flex', flexDirection: 'column', gap: 'clamp(4px, 0.8vh, 6px)', overflowY: 'auto', minHeight: 0 }}>
         <div style={{
-          fontSize: '10px',
+          fontSize: 'clamp(8px, 1vh, 10px)',
           fontWeight: 700,
           letterSpacing: '0.1em',
           color: 'var(--text-dim)',
           fontFamily: 'var(--font-mono)',
-          marginBottom: '4px',
+          marginBottom: '2px',
+          flexShrink: 0,
         }}>
           UP NEXT
         </div>
@@ -117,6 +119,7 @@ export default function WeatherPanel({ weather, slotOrder, currentSlotIndex, cat
                 alignItems: 'center',
                 gap: '8px',
                 opacity: isPast ? 0.3 : 1,
+                flexShrink: 0,
               }}
             >
               <span style={{
@@ -128,7 +131,7 @@ export default function WeatherPanel({ weather, slotOrder, currentSlotIndex, cat
                 boxShadow: isCurrent ? `0 0 6px var(--color-${cat})` : 'none',
               }} />
               <span style={{
-                fontSize: '11px',
+                fontSize: 'clamp(9px, 1.1vh, 11px)',
                 fontFamily: 'var(--font-mono)',
                 fontWeight: isCurrent ? 700 : 400,
                 color: isCurrent ? `var(--color-${cat})` : 'var(--text-secondary)',
