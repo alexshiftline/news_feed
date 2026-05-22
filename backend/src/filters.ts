@@ -10,6 +10,15 @@ const SPONSOR_TITLE_PATTERNS = [
   /brought to you by/i,
   /in partnership with/i,
   /presented by/i,
+  /^webinar:/i,
+  /^virtual event:/i,
+  /^live event:/i,
+  /^upcoming event:/i,
+  /^conference:/i,
+  /\bwebinar\b/i,
+  /register (now|today|free)/i,
+  /join us (live|online|virtually)/i,
+  /free (registration|ticket)/i,
 ]
 
 const SPONSOR_KEYWORDS = [
@@ -31,8 +40,10 @@ const DEVTO_ALLOWED_TAGS = new Set([
 ])
 
 export function ageFilter(item: FeedItem): boolean {
-  const age = Date.now() - item.pubDate.getTime()
-  return isNaN(item.pubDate.getTime()) || age <= MAX_AGE_MS
+  const t = item.pubDate.getTime()
+  if (isNaN(t)) return true
+  const age = Date.now() - t
+  return age >= 0 && age <= MAX_AGE_MS  // reject future-dated items (events) and expired items
 }
 
 export function sponsorFilter(item: FeedItem): boolean {

@@ -3,9 +3,9 @@ services:
     build: ./backend
     restart: unless-stopped
     environment:
-      PORT: 3001
+      PORT: 7473
     ports:
-      - "3001:3001"
+      - "7473:7473"
 
   frontend:
     build: ./frontend
@@ -13,6 +13,6 @@ services:
     depends_on:
       - backend
     environment:
-      VITE_BACKEND_URL: "http://backend:3001"
+      VITE_BACKEND_URL: "http://backend:7473"
     ports:
-      - "5173:5173"
+      - "7474:7474"

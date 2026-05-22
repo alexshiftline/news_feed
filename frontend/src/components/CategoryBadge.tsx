@@ -1,18 +1,11 @@
 import type { Category } from '../types'
+import { CATEGORY_LABELS } from '../constants'
 
 interface Props {
   category: Category
   cvssScore?: number
   isCritical?: boolean
   cveId?: string
-}
-
-const CATEGORY_LABELS: Record<Category, string> = {
-  security: 'SECURITY',
-  ai: 'AI',
-  dev: 'DEV',
-  tech: 'TECH',
-  cloud: 'CLOUD',
 }
 
 export default function CategoryBadge({ category, cvssScore, isCritical, cveId }: Props) {

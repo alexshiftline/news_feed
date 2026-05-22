@@ -40,7 +40,7 @@ class ErrorBoundary extends React.Component<
           gap: '16px',
         }}>
           <div style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '0.1em' }}>
-            BOARD OFFLINE
+            FEED OFFLINE
           </div>
           <div style={{ fontSize: '14px', color: '#8888a8' }}>
             Reloading in 30 seconds…

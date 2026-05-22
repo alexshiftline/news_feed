@@ -1,7 +1,7 @@
 import type { Category, FeedItem } from './types.js'
 import { SLOT_ORDER, STORIES_PER_SLOT } from './config/weights.js'
 
-const MAX_AGE_MS = 48 * 60 * 60 * 1000
+const MAX_AGE_MS = 72 * 60 * 60 * 1000
 const MAX_STORE_SIZE = 500
 
 const store = new Map<string, FeedItem>()
@@ -57,6 +57,25 @@ export function buildCycleFeed(): FeedItem[] {
   }
 
   return result
+}
+
+export function getWeekendItems(): FeedItem[] {
+  const now = new Date()
+  const dayOfWeek = now.getDay() // 0=Sun, 1=Mon...
+  const lastSunday = new Date(now)
+  lastSunday.setDate(now.getDate() - dayOfWeek)
+  lastSunday.setHours(23, 59, 59, 999)
+  const lastFriday = new Date(lastSunday)
+  lastFriday.setDate(lastSunday.getDate() - 2)
+  lastFriday.setHours(0, 0, 0, 0)
+
+  return Array.from(store.values())
+    .filter(item => item.pubDate >= lastFriday && item.pubDate <= lastSunday)
+    .sort((a, b) => {
+      if (a.isCritical !== b.isCritical) return a.isCritical ? -1 : 1
+      const s = (b.cvssScore ?? 0) - (a.cvssScore ?? 0)
+      return s !== 0 ? s : b.pubDate.getTime() - a.pubDate.getTime()
+    })
 }
 
 function pruneExpired(): void {

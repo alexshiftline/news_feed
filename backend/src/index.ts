@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import { startPolling } from './poller.js'
-import { buildCycleFeed, getAllItems, getItemCount, getCategoryCounts } from './store.js'
+import { buildCycleFeed, getAllItems, getItemCount, getCategoryCounts, getWeekendItems } from './store.js'
 import { getWeather } from './weatherService.js'
 
 const app = express()
@@ -9,7 +9,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001
 
 app.use(cors({
   origin: [
-    'http://localhost:5173',
+    'http://localhost:7474',
     'http://localhost:4173',
     'https://starcraft-dev.ngrok.app',
   ],
@@ -39,6 +39,13 @@ app.get('/api/feed/all', (_req, res) => {
   res.json({
     items: getAllItems(200),
     totalCount: getItemCount(),
+    fetchedAt: new Date().toISOString(),
+  })
+})
+
+app.get('/api/feed/weekend-catchup', (_req, res) => {
+  res.json({
+    items: getWeekendItems(),
     fetchedAt: new Date().toISOString(),
   })
 })
